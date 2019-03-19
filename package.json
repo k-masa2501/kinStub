@@ -1,0 +1,14 @@
+{
+  "name": "kinstub",
+  "version": "0.0.1",
+  "description": "Server side script to debug kintone API.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Masanori Kitajima (https://github.com/k-masa2501)",
+  "license": "MIT"
+}
