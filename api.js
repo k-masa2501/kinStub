@@ -152,4 +152,4 @@ kintone.prototype.setPluginId = function (id) {
 }
 
 module.exports = kintone;
-
+//test
