@@ -1,7 +1,6 @@
 const request = require("request-promise");
 const querystring = require("querystring");
 const btoa = require('btoa');
-const fs = require("fs");
 
 var config = null;
 const kindebug = {post: null};
@@ -149,6 +148,56 @@ restApi.prototype = {
 
             kindebug.post = null;
         }
+    },
+    proxy: function (url, method, headers, data, callback, errback){
+        const request = this.requestWithProxy();
+        const options = {};
+        options.json = true;
+        options.method = method;
+        options.headers = headers;
+        options.body = data;
+        return new Promise(resolve, reject){
+            try {
+                const response = request(options);
+
+                if (opt_callback) {
+                    opt_callback(response);
+                } else {
+                    return resolve(response);
+                }
+            } catch (error) {
+                if (err_callback) {
+                    err_callback(error);
+                } else {
+                    return reject(error);
+                }
+            }
+        };
+    },
+    proxy_upload: function (url, method, headers, data, callback, errback){
+        const request = this.requestWithProxy();
+        const options = {};
+        options.json = true;
+        options.method = method;
+        options.headers = headers;
+        options.formData = data;
+        return new Promise(resolve, reject){
+            try {
+                const response = request(options);
+
+                if (opt_callback) {
+                    opt_callback(response);
+                } else {
+                    return resolve(response);
+                }
+            } catch (error) {
+                if (err_callback) {
+                    err_callback(error);
+                } else {
+                    return reject(error);
+                }
+            }
+        };
     }
 };
 

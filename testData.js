@@ -1,6 +1,7 @@
 const request = require("request-promise");
 const querystring = require("querystring");
 const btoa = require('btoa');
+const fs = require("fs");
 
 var config = null;
 
@@ -88,7 +89,7 @@ testData.prototype = {
         const response = await request.post(options);
         return response;
     }
-}
+};
 
 const kintoneUrl = function(_url) {
 
