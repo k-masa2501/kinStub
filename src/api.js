@@ -30,19 +30,15 @@ kintone.prototype.api = function (pathOrUrl, method, params, opt_callback, opt_e
 
     switch (method) {
         case "GET":
-        case "get":
             return restApi.get(pathOrUrl, params, opt_callback, opt_errback);
             break;
         case "POST":
-        case "post":
             return restApi.post(pathOrUrl, params, opt_callback, opt_errback);
             break;
         case "PUT":
-        case "put":
             return restApi.put(pathOrUrl, params, opt_callback, opt_errback);
             break;
         case "DELETE":
-        case "delete":
             return restApi.delete(pathOrUrl, params, opt_callback, opt_errback);
             break;
     }
@@ -234,6 +230,22 @@ kintone.prototype.getLoginUser = function () {
     return loginUser;
 }
 
+/*"userinfo": {
+    "FFSYS_Kintone": {
+        "code": "sample",
+        "email": "sample@sample.com",
+        "employeeNumber": "",
+        "extensionNumber": "",
+        "id": "1",
+        "isGuest": "false",
+        "language": "ja",
+        "mobilePhone": "09012345678",
+        "name": "sample",
+        "phone": "0426-12-3456",
+        "timezone": "Asia/Tokyo",
+        "url": "http://sample.com"
+    }
+}*/
 kintone.prototype.setLoginUser = function (_loginUser) {
     loginUser = _loginUser;
 }
@@ -404,27 +416,20 @@ kintone.prototype.plugin.app.setProxyConfig(url, method, headers, data, callback
 }
 
 kintone.prototype.plugin.app.getProxyConfig(url, method){
-    if ()
+    if (proxyConfig[url] && proxyConfig[url][method]){
+        return proxyConfig[url][method];
+    }
+}
+
+kintone.prototype.plugin.app.proxy = function (pluginId, url, method, headers, data, callback, errback) {
+
+    return restApi.proxy(url, method, headers, data, callback, errback);
+}
+kintone.prototype.plugin.app.proxy.upload = function (url, method, headers, data, callback, errback) {
+    restApi.proxy_upload(url, method, headers, data, callback, errback);
 }
 
 kintone.prototype.Promise = Promise;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-kintone.prototype.setPluginId = function (id) {
-    this.$PLUGIN_ID = id;
-}
 
 module.exports = kintone;
 //test

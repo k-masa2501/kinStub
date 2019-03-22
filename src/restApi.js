@@ -20,35 +20,38 @@ restApi.prototype = {
         options.url = `${url}?${querystring.stringify(param)}`;
         options.json = true;
         options.headers = {
-            Host: `${config.data.domain}:443`,
             "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
         };
-        
+
+        var response = null;
+
         try{
-            const response = await request.get(options);
-            
-            if (opt_callback){
-                opt_callback(response);
-            }else{
-                return Promise.resolve(response);
-            }
+            response = await request.get(options);
         }catch(error){
+            response = error.error || error;
             if (err_callback){
-                err_callback(error);
+                err_callback(response);
+                return;
             }else{
-                return Promise.reject(error);
+                return Promise.reject(response);
             }
         }
 
+        if (opt_callback) {
+            opt_callback(response);
+        } else {
+            return Promise.resolve(response);
+        }
     },
     post: async function (url, param, opt_callback = null, err_callback = null) {
+        const domain = url.match(/https:\/\/(.*.cybozu.com)\/{0,1}.*/)[1];
         const request = this.requestWithProxy();
         const options = {};
         options.url = url;
         options.body = param;
         options.json = true;
         options.headers = {
-            Host: `${config.data.domain}:443`,
+            Host: `${domain}:443`,
             "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
         };
 
@@ -71,13 +74,14 @@ restApi.prototype = {
         }
     },
     put: async function(url, param, opt_callback = null, err_callback = null) {
+        const domain = url.match(/https:\/\/(.*.cybozu.com)\/{0,1}.*/)[1];
         const request = this.requestWithProxy();
         const options = {};
         options.url   = url;
         options.body  = param;
         options.json  = true;
         options.headers = {
-            Host: `${config.data.domain}:443`,
+            Host: `${domain}:443`,
             "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
         };
         
@@ -99,13 +103,14 @@ restApi.prototype = {
 
     },
     delete: async function (url, param, opt_callback = null, err_callback = null) {
+        const domain = url.match(/https:\/\/(.*.cybozu.com)\/{0,1}.*/)[1];
         const request = this.requestWithProxy();
         const options = {};
         options.url = url;
         options.body = param;
         options.json = true;
         options.headers = {
-            Host: `${config.data.domain}:443`,
+            Host: `${domain}:443`,
             "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
         };
 
@@ -126,7 +131,7 @@ restApi.prototype = {
         }
 
     },
-    postTrash: async function () {
+    postDataTrash: async function () {
 
         if (kindebug.post && 0 < kindebug.post.length){
             const request = this.requestWithProxy();
@@ -156,23 +161,23 @@ restApi.prototype = {
         options.method = method;
         options.headers = headers;
         options.body = data;
-        return new Promise(resolve, reject){
-            try {
-                const response = request(options);
-
-                if (opt_callback) {
-                    opt_callback(response);
-                } else {
-                    return resolve(response);
+        return new Promise((resolve, reject) => {
+            request(options).then(
+                (response) => {
+                    if (opt_callback) {
+                        opt_callback(response);
+                    } else {
+                        return resolve(response);
+                    }
                 }
-            } catch (error) {
+            ).catch((error) => {
                 if (err_callback) {
                     err_callback(error);
                 } else {
                     return reject(error);
                 }
-            }
-        };
+            });
+        });
     },
     proxy_upload: function (url, method, headers, data, callback, errback){
         const request = this.requestWithProxy();
@@ -181,23 +186,23 @@ restApi.prototype = {
         options.method = method;
         options.headers = headers;
         options.formData = data;
-        return new Promise(resolve, reject){
-            try {
-                const response = request(options);
-
-                if (opt_callback) {
-                    opt_callback(response);
-                } else {
-                    return resolve(response);
+        return new Promise((resolve, reject) => {
+            request(options).then(
+                (response) => {
+                    if (opt_callback) {
+                        opt_callback(response);
+                    } else {
+                        return resolve(response);
+                    }
                 }
-            } catch (error) {
+            ).catch((error) => {
                 if (err_callback) {
                     err_callback(error);
                 } else {
                     return reject(error);
                 }
-            }
-        };
+            });
+        });
     }
 };
 

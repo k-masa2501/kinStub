@@ -1,5 +1,5 @@
-const kintone = require(__dirname + "/api.js");
-const testData = require(__dirname + "/testData.js");
+const kintone = require(__dirname + "src/api.js");
+const testData = require(__dirname + "src/testData.js");
 
 module.exports.kintone = function(filePath){
     return  new kintone(filePath);

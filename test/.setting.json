@@ -1,0 +1,6 @@
+{
+    "domain": "sample.cybozu.com",
+    "username": "sample@sample.com",
+    "password": "sample",
+    "proxy": "http://sample:sample123@sample.com:8080"
+}
