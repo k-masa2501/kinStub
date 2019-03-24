@@ -56,6 +56,9 @@
                 function(result){
                     chai.assert(result.record.single_line_string.value, "aaaa");
                     done();
+                },
+                function(error){
+                    done(error);
                 }
             );
         });
@@ -146,7 +149,171 @@
             });
         });
 
+        it('post success.', async function () {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", record: { single_line_string: { value: "aaaa" } } };
+            const result = await restApi.post(url, param, null, null);
+            chai.assert.isOk(result.id);
+        });
 
+        it('post success by multiple records.', async function () {
+            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const param = { app: "7", records: [{ single_line_string: { value: "aaaa" } }, { single_line_string: { value: "bbbb" } }] };
+            const result = await restApi.post(url, param, null, null);
+            chai.assert.isOk(result.ids);
+        });
+
+        it('post success by promise.', function (done) {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", record: { single_line_string: { value: "aaaa" } } };
+            restApi.post(url, param, null, null).then(
+                function(resp){
+                    chai.assert.isOk(resp.id);
+                    done();
+                },
+                function(error){
+                    done(error);
+                }
+            );
+        });
+        
+        it('post success by callback.', function (done) {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", record: { single_line_string: { value: "aaaa" } } };
+            restApi.post(url, param, 
+                function(resp){
+                    chai.assert.isOk(resp.id);
+                    done();
+                }, 
+                function(error){
+                    done(error);
+                }
+            );
+        });
+
+        it('post faild by app not exist.', async function () {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "10000", record: { single_line_string: { value: "aaaa" } } };
+            var result = false;
+            try{
+                await restApi.post(url, param, null, null);
+                result = true;
+            }catch(error){
+                chai.assert.isOk(error);
+            }
+            if (result) { throw new Error(); }
+        });
+
+        it('post faild by promise.', function (done) {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "10000", record: { single_line_string: { value: "aaaa" } } };
+            restApi.post(url, param, null, null).then(
+                function(resp){
+                    done(resp);
+                },
+                function(error){
+                    chai.assert.isOk(error.message);
+                    done();
+                }
+            );
+        });
+        
+        it('post faild by callback.', function (done) {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "10000", record: { single_line_string: { value: "aaaa" } } };
+            restApi.post(url, param, 
+                function(resp){
+                    done(resp);
+                }, 
+                function(error){
+                    chai.assert.isOk(error.message);
+                    done();
+                }
+            );
+        });
+
+        it('put success.', async function () {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "aaaa" } } };
+            const result = await restApi.put(url, param, null, null);
+            chai.assert.isOk(result.revision);
+        });
+
+        it('put success by multiple records.', async function () {
+            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const param = { app: "7", records: [{id:testData.get.ids[0], record:{ single_line_string: { value: "aaaa" } }}, { id:testData.get.ids[1], record:{single_line_string: { value: "bbbb" } }}] };
+            const result = await restApi.put(url, param, null, null);
+            chai.assert.isOk(2 === result.records.length);
+        });
+
+        it('put success by promise.', function (done) {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "aaaa" } } };
+            restApi.put(url, param, null, null).then(
+                function(resp){
+                    chai.assert.isOk(resp.revision);
+                    done();
+                },
+                function(error){
+                    done(error);
+                }
+            );
+        });
+        
+        it('put success by callback.', function (done) {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "aaaa" } } };
+            restApi.put(url, param, 
+                function(resp){
+                    chai.assert.isOk(resp.revision);
+                    done();
+                }, 
+                function(error){
+                    done(error);
+                }
+            );
+        });
+
+        it('put faild by record id not exist.', async function () {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", id:99999999, record: { single_line_string: { value: "aaaa" } } };
+            var result = false;
+            try{
+                await restApi.put(url, param, null, null);
+                result = true;
+            }catch(error){
+                chai.assert.isOk(error);
+            }
+            if (result) { throw new Error(); }
+        });
+
+        it('put faild by promise.', function (done) {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", id:99999999, record: { single_line_string: { value: "aaaa" } } };
+            restApi.put(url, param, null, null).then(
+                function(resp){
+                    done(resp);
+                },
+                function(error){
+                    chai.assert.isOk(error.message);
+                    done();
+                }
+            );
+        });
+        
+        it('put faild by callback.', function (done) {
+            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const param = { app: "7", id:99999999, record: { single_line_string: { value: "aaaa" } } };
+            restApi.put(url, param, 
+                function(resp){
+                    done(resp);
+                }, 
+                function(error){
+                    chai.assert.isOk(error.message);
+                    done();
+                }
+            );
+        });
         afterEach(function () { });
 
         after(async function () { 

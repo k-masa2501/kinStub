@@ -12,18 +12,18 @@
   "author": "Masanori Kitajima (https://github.com/k-masa2501)",
   "license": "MIT",
   "nyc": {
-      "include": [
-          "src/*.js"
-      ],
-      "exclude": [],
-      "reporter": [
-          "text-summary",
-          "lcov",
-          "cobertura"
-      ],
-      "cache": true,
-      "all": true,
-      "report-dir": "./test_report/coverage"
+    "include": [
+      "src/*.js"
+    ],
+    "exclude": [],
+    "reporter": [
+      "text-summary",
+      "lcov",
+      "cobertura"
+    ],
+    "cache": true,
+    "all": true,
+    "report-dir": "./test_report/coverage"
   },
   "dependencies": {
     "btoa": "^1.2.1",

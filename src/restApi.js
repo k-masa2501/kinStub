@@ -11,8 +11,12 @@ var restApi = function(settings) {
 
 restApi.prototype = {
     requestWithProxy: function() {
-        return request.defaults(
-            { 'proxy': `${config.data.proxy}` });
+        if (config.data.proxy){
+            return request.defaults(
+                { 'proxy': `${config.data.proxy}` });
+        }else{
+            return request;
+        }
     },
     get: async function(url, param, opt_callback = null, err_callback = null) {
         const request = this.requestWithProxy();
@@ -44,44 +48,44 @@ restApi.prototype = {
         }
     },
     post: async function (url, param, opt_callback = null, err_callback = null) {
-        const domain = url.match(/https:\/\/(.*.cybozu.com)\/{0,1}.*/)[1];
         const request = this.requestWithProxy();
         const options = {};
         options.url = url;
         options.body = param;
         options.json = true;
         options.headers = {
-            Host: `${domain}:443`,
             "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
         };
 
+        var response = null;
+
         try {
-            const response = await request.post(options);
+            response = await request.post(options);
             kindebug.post = kindebug.post || new Array();
             kindebug.post.push({ app: param.app, resp: response});
 
-            if (opt_callback) {
-                opt_callback(response);
-            } else {
-                return Promise.resolve(response);
-            }
         } catch (error) {
             if (err_callback) {
                 err_callback(error);
+                return;
             } else {
                 return Promise.reject(error);
             }
         }
+
+        if (opt_callback) {
+            opt_callback(response);
+        } else {
+            return Promise.resolve(response);
+        }
     },
     put: async function(url, param, opt_callback = null, err_callback = null) {
-        const domain = url.match(/https:\/\/(.*.cybozu.com)\/{0,1}.*/)[1];
         const request = this.requestWithProxy();
         const options = {};
         options.url   = url;
         options.body  = param;
         options.json  = true;
         options.headers = {
-            Host: `${domain}:443`,
             "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
         };
         
@@ -203,6 +207,30 @@ restApi.prototype = {
                 }
             });
         });
+    },
+    fileUpload: async function (url, filePath, contentType, opt_callback, err_callback) {
+        const fileName = filePath.match(/\\\\/) ? filePath.split("\\\\").pop() : filePath.split("/").pop();
+        const request = this.requestWithProxy();
+        const options = {};
+        options.url = url;
+        options.json = true;
+        options.formData = {
+            name: fileName,
+            file: {
+                value: fs.createReadStream(filePath),
+                options: {
+                    filename: fileName,
+                    contentType: contentType
+                }
+            }
+        };
+
+        options.headers = {
+            "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
+        };
+
+        const response = await request.post(options);
+        return response;
     }
 };
 
