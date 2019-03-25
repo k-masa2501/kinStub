@@ -1,7 +1,7 @@
 const ev = new (require('events'))();
 const util = require('util');
 const fs = require('fs');
-const querystring = require("querystring");
+//const querystring = require("querystring");
 var config = null;
 var restApi = null;
 
@@ -9,6 +9,11 @@ var kintone = function (filePath) {
     config = new (require('./config'))(filePath);
     restApi = new (require('./restApi'))(config);
 }
+
+kintone.prototype.debugObjSet = function (_config, _restApi) {
+    config = _config;
+    restApi = _restApi;
+ }
 
 kintone.prototype.events = function () { }
 
@@ -18,8 +23,12 @@ kintone.prototype.events.on = function (event, func) {
 }
 
 kintone.prototype.events.off = function (event) {
-    const result = ev.removeAllListeners(event);
-    return result ? true : false;
+    if (0 >= ev.listenerCount(event)){
+        return false;
+    }else{
+        ev.removeAllListeners(event);
+        return true;
+    }
 }
 
 kintone.prototype.events.do = function (event, data) {
@@ -31,33 +40,59 @@ kintone.prototype.api = function (pathOrUrl, method, params, opt_callback, opt_e
     switch (method) {
         case "GET":
             return restApi.get(pathOrUrl, params, opt_callback, opt_errback);
-            break;
         case "POST":
             return restApi.post(pathOrUrl, params, opt_callback, opt_errback);
-            break;
         case "PUT":
             return restApi.put(pathOrUrl, params, opt_callback, opt_errback);
-            break;
         case "DELETE":
             return restApi.delete(pathOrUrl, params, opt_callback, opt_errback);
-            break;
     }
+}
 
+kintone.prototype.postDataTrash = function (){
+    restApi.postDataTrash();
 }
 
 kintone.prototype.api.url = function (_path, flg) {
 
     const path = _path.replace(".json", "");
 
-    if (config.data.guest_space_id && Number(config.data.guest_space_id) > 0) {
+    if (flg && config.data.guest_space_id && Number(config.data.guest_space_id) > 0) {
         return `https://${config.data.domain}/k/guest/${config.data.guest_space_id}${path.replace("/k", "")}.json`;
     }
     return `https://${config.data.domain}${path}.json`;
 }
 
+const querystring = function (_param){
+    // params = {foo: 'bar', record: {key: ['val1', 'val2']}}
+    // foo=bar&record.key[0]=val1&record.key[1]=val2
+    const _parentKey = null;
+    const _query = [];
+
+    const exec = function (param, parentKey, query){
+        if (Array.isArray(param)) {
+            for (let i = 0, len = param.length; i < len; i++) {
+                exec(param[i], parentKey ? `${parentKey}[${i.toString()}]` : `[${i.toString()}]`, query);
+            }
+        } else if (toString.call(param).slice(8, -1).toLowerCase() === 'object') {
+            for (let key in param) {
+                exec(param[key], parentKey ? `${parentKey}.${key}` : `${key}`, query);
+            }
+        } else {
+            if (parentKey) {
+                query.push(`${parentKey}=${param}`);
+            }
+        }
+    }
+
+    exec(_param, _parentKey, _query);
+    return _query.join("&");
+
+}
 kintone.prototype.api.urlForGet = function (_path, params, opt_detectGuestSpace) {
 
-    const path = _path.replace(".json", "");
+    return querystring(params);
+    /*const path = _path.replace(".json", "");
     var url = null;
 
     if (config.data.guest_space_id && Number(config.data.guest_space_id) > 0) {
@@ -65,7 +100,7 @@ kintone.prototype.api.urlForGet = function (_path, params, opt_detectGuestSpace)
     }else{
         url = `https://${config.data.domain}${path}.json`;
     }
-    return `${url}?${querystring.stringify(param)}`;
+    return `${url}?${querystring.stringify(params)}`;*/
 }
 
 var csrfToken = null;
@@ -263,7 +298,7 @@ kintone.prototype.app.record.setFieldShown = function (fieldCode, isShown) {
     if (null == document) {return null;}
     const element = document.getElementById(fieldCode);
     if (element){
-        isShown ? element.style.display = "block" : element.style.display = = "none";
+        isShown ? element.style.display = "block" : element.style.display = "none";
     }
 }
 
@@ -271,7 +306,7 @@ kintone.prototype.mobile.app.record.setFieldShown = function (fieldCode, isShown
     if (null == document) { return null; }
     const element = document.getElementById(fieldCode);
     if (element) {
-        isShown ? element.style.display = "block" : element.style.display = = "none";
+        isShown ? element.style.display = "block" : element.style.display = "none";
     }
 }
 
@@ -279,7 +314,7 @@ kintone.prototype.app.record.setGroupFieldOpen = function (fieldCode, isOpen) {
     if (null == document) { return null; }
     const element = document.getElementById(fieldCode);
     if (element) {
-        isOpen ? element.style.display = "block" : element.style.display = = "none";
+        isOpen ? element.style.display = "block" : element.style.display = "none";
     }
 }
 
@@ -287,7 +322,7 @@ kintone.prototype.mobile.app.record.setGroupFieldOpen = function (fieldCode, isO
     if (null == document) { return null; }
     const element = document.getElementById(fieldCode);
     if (element) {
-        isOpen ? element.style.display = "block" : element.style.display = = "none";
+        isOpen ? element.style.display = "block" : element.style.display = "none";
     }
 }
 
@@ -407,7 +442,7 @@ kintone.prototype.plugin.app.getConfig = function (PLUGIN_ID) {
 }
 
 var proxyConfig = {};
-kintone.prototype.plugin.app.setProxyConfig(url, method, headers, data, callback){
+kintone.prototype.plugin.app.setProxyConfig = function(url, method, headers, data, callback){
     proxyConfig[url] = proxyConfig[url] || {};
     proxyConfig[url][method] = { headers, data };
     if (callback){
@@ -415,16 +450,22 @@ kintone.prototype.plugin.app.setProxyConfig(url, method, headers, data, callback
     }
 }
 
-kintone.prototype.plugin.app.getProxyConfig(url, method){
+kintone.prototype.plugin.app.getProxyConfig = function(url, method){
     if (proxyConfig[url] && proxyConfig[url][method]){
         return proxyConfig[url][method];
     }
 }
 
 kintone.prototype.plugin.app.proxy = function (pluginId, url, method, headers, data, callback, errback) {
-
-    return restApi.proxy(url, method, headers, data, callback, errback);
+    if (proxyConfig[url] && proxyConfig[url][method]) {
+        const newHeaders = Object.assign(proxyConfig[url][method].headers, headers);
+        const newData = Object.assign(proxyConfig[url][method].data, data);
+        return restApi.proxy(url, method, newHeaders, newData, callback, errback);
+    }else{
+        return restApi.proxy(url, method, headers, data, callback, errback);
+    }
 }
+
 kintone.prototype.plugin.app.proxy.upload = function (url, method, headers, data, callback, errback) {
     restApi.proxy_upload(url, method, headers, data, callback, errback);
 }

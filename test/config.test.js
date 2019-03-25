@@ -21,13 +21,13 @@
 
         it('config load success.', function () {
             const config = new (require('../src/config.js'))("./test/.setting.json");
-            chai.assert(config.data.domain, "sample.cybozu.com");
+            chai.assert.equal(config.data.domain, "sample.cybozu.com");
         });
 
         it('config load success case not config path specified.', function () {
             process.env.KINTONE_CONFIG = "./test/.setting.json"; 
             const config = new (require('../src/config.js'))();
-            chai.assert(config.data.domain, "sample.cybozu.com");
+            chai.assert.equal(config.data.domain, "sample.cybozu.com");
         });
 
         it('config load error.', function () {
@@ -45,4 +45,4 @@
 
     });
 
-})();
+});

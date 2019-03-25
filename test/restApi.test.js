@@ -1,5 +1,7 @@
 (function () {
     "use strict";
+    const btoa = require('btoa');
+    const fs = require('fs');
 
     function sleep(time) {
 
@@ -76,7 +78,7 @@
                 });
         });
 
-        it('get faild by not exist record id.', async function () {
+        it('get faild reason not exist record id.', async function () {
             const url = `https://${config.data.domain}//k/v1/record.json`;
             const param = { app: "7", id: 10000 };
             var result = null;
@@ -89,7 +91,7 @@
             if (result) { throw new Error(); }
         });
 
-        it('get faild by promise.', function (done) {
+        it('get faild by promise(not exist record id).', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
             const param = { app: "7", id: 10000 };
 
@@ -104,7 +106,7 @@
                 );
         });
 
-        it('get faild by callback.', function (done) {
+        it('get faild by callback(not exist record id).', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
             const param = { app: "7", id: 10000 };
 
@@ -119,7 +121,7 @@
             );
         });
 
-        it('get faild by not exist domain.', function (done) {
+        it('get faild reason not exist domain.', function (done) {
             const url = `https://aaaaaacybozu.com/k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             restApi.get(url, param,
@@ -151,21 +153,21 @@
 
         it('post success.', async function () {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "7", record: { single_line_string: { value: "cccc" } } };
             const result = await restApi.post(url, param, null, null);
             chai.assert.isOk(result.id);
         });
 
         it('post success by multiple records.', async function () {
             const url = `https://${config.data.domain}//k/v1/records.json`;
-            const param = { app: "7", records: [{ single_line_string: { value: "aaaa" } }, { single_line_string: { value: "bbbb" } }] };
+            const param = { app: "7", records: [{ single_line_string: { value: "ddd" } }, { single_line_string: { value: "bbbb" } }] };
             const result = await restApi.post(url, param, null, null);
             chai.assert.isOk(result.ids);
         });
 
         it('post success by promise.', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "7", record: { single_line_string: { value: "eeee" } } };
             restApi.post(url, param, null, null).then(
                 function(resp){
                     chai.assert.isOk(resp.id);
@@ -178,8 +180,8 @@
         });
         
         it('post success by callback.', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", record: { single_line_string: { value: "aaaa" } } };
+            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const param = { app: "7", record: { single_line_string: { value: "ffff" } } };
             restApi.post(url, param, 
                 function(resp){
                     chai.assert.isOk(resp.id);
@@ -191,9 +193,9 @@
             );
         });
 
-        it('post faild by app not exist.', async function () {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "10000", record: { single_line_string: { value: "aaaa" } } };
+        it('post faild reason app not exist.', async function () {
+            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const param = { app: "10000", record: { single_line_string: { value: "gggg" } } };
             var result = false;
             try{
                 await restApi.post(url, param, null, null);
@@ -204,9 +206,9 @@
             if (result) { throw new Error(); }
         });
 
-        it('post faild by promise.', function (done) {
+        it('post faild by promise(app not exist).', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "10000", record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "10000", record: { single_line_string: { value: "hhhh" } } };
             restApi.post(url, param, null, null).then(
                 function(resp){
                     done(resp);
@@ -218,9 +220,9 @@
             );
         });
         
-        it('post faild by callback.', function (done) {
+        it('post faild by callback(app not exist).', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "10000", record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "10000", record: { single_line_string: { value: "iiii" } } };
             restApi.post(url, param, 
                 function(resp){
                     done(resp);
@@ -234,21 +236,21 @@
 
         it('put success.', async function () {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "jjjj" } } };
             const result = await restApi.put(url, param, null, null);
             chai.assert.isOk(result.revision);
         });
 
         it('put success by multiple records.', async function () {
             const url = `https://${config.data.domain}//k/v1/records.json`;
-            const param = { app: "7", records: [{id:testData.get.ids[0], record:{ single_line_string: { value: "aaaa" } }}, { id:testData.get.ids[1], record:{single_line_string: { value: "bbbb" } }}] };
+            const param = { app: "7", records: [{id:testData.get.ids[0], record:{ single_line_string: { value: "kkkk" } }}, { id:testData.get.ids[1], record:{single_line_string: { value: "bbbb" } }}] };
             const result = await restApi.put(url, param, null, null);
             chai.assert.isOk(2 === result.records.length);
         });
 
         it('put success by promise.', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "llll" } } };
             restApi.put(url, param, null, null).then(
                 function(resp){
                     chai.assert.isOk(resp.revision);
@@ -262,7 +264,7 @@
         
         it('put success by callback.', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "mmmm" } } };
             restApi.put(url, param, 
                 function(resp){
                     chai.assert.isOk(resp.revision);
@@ -274,9 +276,9 @@
             );
         });
 
-        it('put faild by record id not exist.', async function () {
+        it('put faild reason record id not exist.', async function () {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", id:99999999, record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "7", id:99999999, record: { single_line_string: { value: "nnnn" } } };
             var result = false;
             try{
                 await restApi.put(url, param, null, null);
@@ -287,9 +289,9 @@
             if (result) { throw new Error(); }
         });
 
-        it('put faild by promise.', function (done) {
+        it('put faild by promise(record id not exist).', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", id:99999999, record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "7", id:99999999, record: { single_line_string: { value: "oooo" } } };
             restApi.put(url, param, null, null).then(
                 function(resp){
                     done(resp);
@@ -301,9 +303,9 @@
             );
         });
         
-        it('put faild by callback.', function (done) {
+        it('put faild by callback(record id not exist).', function (done) {
             const url = `https://${config.data.domain}//k/v1/record.json`;
-            const param = { app: "7", id:99999999, record: { single_line_string: { value: "aaaa" } } };
+            const param = { app: "7", id:99999999, record: { single_line_string: { value: "pppp" } } };
             restApi.put(url, param, 
                 function(resp){
                     done(resp);
@@ -314,6 +316,347 @@
                 }
             );
         });
+
+        it('delete success.', async function () {
+
+            // テストデータ作成
+            const postResult = await restApi.post(
+                `https://${config.data.domain}//k/v1/record.json`,
+                { app: "7", record: { single_line_string: { value: "qqqq" } } },
+                null,
+                null
+            );
+
+            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const param = { app: "7", ids: [postResult.id] };
+            const result = await restApi.delete(url, param, null, null);
+            chai.assert.isOk(result);
+        });
+
+        it('delete success by promise.', function (done) {
+
+            // テストデータ作成
+            restApi.post(
+                `https://${config.data.domain}//k/v1/record.json`,
+                { app: "7", record: { single_line_string: { value: "rrrr" } } },
+                null,
+                null
+            ).then(
+                function(resp){
+                    const url = `https://${config.data.domain}//k/v1/records.json`;
+                    const param = { app: "7", ids: [resp.id] };
+                    restApi.delete(url, param, null, null).then(
+                        function (resp) {
+                            chai.assert.isOk(resp);
+                            done();
+                        },
+                        function (error) {
+                            done(error);
+                        }
+                    );
+                },
+                function (error) { },
+            );
+        });
+
+        it('delete success by callback.', function (done) {
+            
+            // テストデータ作成
+            restApi.post(
+                `https://${config.data.domain}//k/v1/record.json`,
+                { app: "7", record: { single_line_string: { value: "ssss" } } },
+                null,
+                null
+            ).then(
+                function(resp){
+                    const url = `https://${config.data.domain}//k/v1/records.json`;
+                    const param = { app: "7", ids: [resp.id] };
+                    restApi.delete(url, param,
+                        function (resp) {
+                            chai.assert.isOk(resp);
+                            done();
+                        },
+                        function (error) {
+                            done(error);
+                        }
+                    );
+                },
+                function(error){}
+            );
+        });
+
+        it('delete faild reason record id not exist.', async function () {
+
+            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const param = { app: "7", ids: [999999] };
+            var result = false;
+            try {
+                await restApi.delete(url, param, null, null);
+                result = true;
+            } catch (error) {
+                chai.assert.isOk(error);
+            }
+            if (result) { throw new Error(); }
+        });
+
+        it('delete faild by promise(record id not exist).', function (done) {
+            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const param = { app: "7", ids: [999999] };
+            restApi.delete(url, param, null, null).then(
+                function (resp) {
+                    done(resp);
+                },
+                function (error) {
+                    chai.assert.isOk(error.message);
+                    done();
+                }
+            );
+        });
+
+        it('delete faild by callback(record id not exist).', function (done) {
+            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const param = { app: "7", ids: [999999] };
+            restApi.delete(url, param,
+                function (resp) {
+                    done(resp);
+                },
+                function (error) {
+                    chai.assert.isOk(error.message);
+                    done();
+                }
+            );
+        });
+        
+        it('proxy success by promise.', function (done) {
+
+            const encode = function(str) {
+                return btoa(unescape(encodeURIComponent(str)));
+            }
+
+            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const param = { app: "7", id: testData.get.ids[0] };
+            const headers = {
+                "Host": `${config.data.domain}:443`,
+                "Content-Type": 'application/json',
+                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+            };
+            restApi.proxy(url, "GET", headers, JSON.stringify(param), null, null).then(
+                function (arg){
+                    chai.assert.isOk(200 === arg[1]);
+                    done();
+                },
+                function(error){
+                    done(error);
+                }
+            );
+        });
+
+        it('proxy success by callback.', function (done) {
+
+            const encode = function (str) {
+                return btoa(unescape(encodeURIComponent(str)));
+            }
+
+            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const param = { app: "7", id: testData.get.ids[0] };
+            const headers = {
+                "Host": `${config.data.domain}:443`,
+                "Content-Type": 'application/json',
+                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+            };
+            restApi.proxy(url, "GET", headers, JSON.stringify(param),
+                function (statusCode, body, headers) {
+                    chai.assert.isOk(200 === statusCode);
+                    done();
+                },
+                function (error) {
+                    done(error);
+                }
+            );
+        });
+
+        it('proxy faild by promise(domain not exist).', function (done) {
+
+            const encode = function (str) {
+                return btoa(unescape(encodeURIComponent(str)));
+            }
+
+            const url = `https://sample.cybozu.com/k/v1/record.json`;
+            const param = { app: "7", id: testData.get.ids[0] };
+            const headers = {
+                "Host": `sample.cybozu.com:443`,
+                "Content-Type": 'application/json',
+                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+            };
+            restApi.proxy(url, "GET", headers, JSON.stringify(param), null, null).then(
+                function (arg) {
+                    done(arg);
+                },
+                function (error) {
+                    chai.assert.isOk(error);
+                    done();
+                }
+            );
+        });
+
+        it('proxy faild by callback(id not exist).', function (done) {
+
+            const encode = function (str) {
+                return btoa(unescape(encodeURIComponent(str)));
+            }
+
+            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const param = { app: "7", id: 999999999 };
+            const headers = {
+                "Host": `${config.data.domain}:443`,
+                "Content-Type": 'application/json',
+                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+            };
+            restApi.proxy(url, "GET", headers, JSON.stringify(param),
+                function (statusCode, body, headers) {
+                    done({ statusCode, body, headers });
+                },
+                function (error) {
+                    chai.assert.isOk(error);
+                    done();
+                }
+            );
+        });
+
+        it('proxy_upload success by promise.', function (done) {
+
+            const encode = function (str) {
+                return btoa(unescape(encodeURIComponent(str)));
+            }
+
+            const url = `https://${config.data.domain}/k/v1/file.json`;
+            const formData = {
+                name: 'test_upload.js',
+                    file: {
+                        value: fs.createReadStream("./test/test_upload.js"),
+                        options: {
+                            filename: 'test_upload.js',
+                            contentType: 'text/plain'
+                    }
+                }
+            }
+            const headers = {
+                "Host": `${config.data.domain}:443`,
+                "Content-Type": 'application/json',
+                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+            };
+            restApi.proxy_upload(url, "POST", headers, formData, null, null).then(
+                function (arg) {
+                    chai.assert.isOk(200 === arg[1]);
+                    chai.assert.isOk(JSON.parse(arg[0]).fileKey);
+                    done();
+                },
+                function (error) {
+                    done(error);
+                }
+            );
+        });
+
+        it('proxy_upload success by callback.', function (done) {
+
+            const encode = function (str) {
+                return btoa(unescape(encodeURIComponent(str)));
+            }
+
+            const url = `https://${config.data.domain}/k/v1/file.json`;
+            const formData = {
+                name: 'test_upload.js',
+                file: {
+                    value: fs.createReadStream("./test/test_upload.js"),
+                    options: {
+                        filename: 'test_upload.js',
+                        contentType: 'text/plain'
+                    }
+                }
+            }
+            const headers = {
+                "Host": `${config.data.domain}:443`,
+                "Content-Type": 'application/json',
+                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+            };
+
+            restApi.proxy_upload(url, "POST", headers, formData,
+                function (statusCode, body, headers) {
+                    chai.assert.isOk(200 === statusCode);
+                    chai.assert.isOk(JSON.parse(body).fileKey);
+                    done();
+                },
+                function (error) {
+                    done(error);
+                });
+        });
+
+        it('proxy_upload faild by promise(value null).', function (done) {
+
+            const encode = function (str) {
+                return btoa(unescape(encodeURIComponent(str)));
+            }
+
+            const url = `https://${config.data.domain}/k/v1/file.json`;
+            const formData = {
+                name: 'test_upload.js',
+                file: {
+                    value: null,
+                    options: {
+                        filename: 'test_upload.js',
+                        contentType: 'text/plain'
+                    }
+                }
+            }
+            const headers = {
+                "Host": `${config.data.domain}:443`,
+                "Content-Type": 'application/json',
+                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+            };
+            restApi.proxy_upload(url, "POST", headers, formData, null, null).then(
+                function (arg) {
+                    done(arg);
+                },
+                function (error) {
+                    chai.assert.isOk(error);
+                    done();
+                }
+            );
+        });
+
+        it('proxy_upload faild by callback(value null).', function (done) {
+
+            const encode = function (str) {
+                return btoa(unescape(encodeURIComponent(str)));
+            }
+
+            const url = `https://${config.data.domain}/k/v1/file.json`;
+            const formData = {
+                name: 'test_upload.js',
+                file: {
+                    value: null,
+                    options: {
+                        filename: 'test_upload.js',
+                        contentType: 'text/plain'
+                    }
+                }
+            }
+            const headers = {
+                "Host": `${config.data.domain}:443`,
+                "Content-Type": 'application/json',
+                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+            };
+
+            restApi.proxy_upload(url, "POST", headers, formData,
+                function (statusCode, body, headers) {
+                    done({ statusCode, body, headers});
+                },
+                function (error) {
+                    chai.assert.isOk(error);
+                    done();
+                });
+        });
+
         afterEach(function () { });
 
         after(async function () { 
@@ -322,4 +665,4 @@
 
     });
 
-})();
+});
