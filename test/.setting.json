@@ -2,5 +2,21 @@
     "domain": "sample.cybozu.com",
     "username": "sample@sample.com",
     "password": "sample",
-    "proxy": "http://sample:sample123@sample.com:8080"
+    "proxy": "http://sample:sample123@sample.com:8080",
+    "userinfo": {
+        "default": {
+            "id": "1",
+            "code": "sample",
+            "name": "sample",
+            "email": "sample@sample.com",
+            "url": "http://sample.com",
+            "employeeNumber": "",
+            "phone": "0426-12-3456",
+            "mobilePhone": "09012345678",
+            "extensionNumber": "",
+            "timezone": "Asia/Tokyo",
+            "isGuest": "false",
+            "language": "ja"
+        }
+    }
 }

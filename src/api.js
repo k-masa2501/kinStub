@@ -1,7 +1,6 @@
 const ev = new (require('events'))();
 const util = require('util');
 const fs = require('fs');
-//const querystring = require("querystring");
 var config = null;
 var restApi = null;
 
@@ -13,7 +12,11 @@ var kintone = function (filePath) {
 kintone.prototype.debugObjSet = function (_config, _restApi) {
     config = _config;
     restApi = _restApi;
- }
+}
+
+kintone.prototype.debugSetPluginId = function (id) {
+    this.$PLUGIN_ID = id;
+}
 
 kintone.prototype.events = function () { }
 
@@ -64,10 +67,8 @@ kintone.prototype.api.url = function (_path, flg) {
 }
 
 const querystring = function (_param){
-    // params = {foo: 'bar', record: {key: ['val1', 'val2']}}
-    // foo=bar&record.key[0]=val1&record.key[1]=val2
-    const _parentKey = null;
     const _query = [];
+    const _parentKey = null;
 
     const exec = function (param, parentKey, query){
         if (Array.isArray(param)) {
@@ -89,10 +90,10 @@ const querystring = function (_param){
     return _query.join("&");
 
 }
+
 kintone.prototype.api.urlForGet = function (_path, params, opt_detectGuestSpace) {
 
-    return querystring(params);
-    /*const path = _path.replace(".json", "");
+    const path = _path.replace(".json", "");
     var url = null;
 
     if (config.data.guest_space_id && Number(config.data.guest_space_id) > 0) {
@@ -100,7 +101,7 @@ kintone.prototype.api.urlForGet = function (_path, params, opt_detectGuestSpace)
     }else{
         url = `https://${config.data.domain}${path}.json`;
     }
-    return `${url}?${querystring.stringify(params)}`;*/
+    return `${url}?${querystring(params)}`;
 }
 
 var csrfToken = null;
@@ -112,12 +113,12 @@ kintone.prototype.setRequestToken = function (_csrfToken) {
     csrfToken = _csrfToken;
 }
 
-var concurrencyLimit = {};
-kintone.prototype.getConcurrencyLimit = function () {
+var concurrencyLimit = {limit:0, running:0};
+kintone.prototype.api.getConcurrencyLimit = function () {
     return Promise.resolve(concurrencyLimit);
 }
 
-kintone.prototype.setConcurrencyLimit = function (limit = 0, running = 0) {
+kintone.prototype.api.setConcurrencyLimit = function (limit = 0, running = 0) {
     concurrencyLimit = { limit, running };
 }
 
@@ -125,7 +126,7 @@ kintone.prototype.proxy = function (url, method, headers, data, callback, errbac
     return restApi.proxy(url, method, headers, data, callback, errback);
 }
 kintone.prototype.proxy.upload = function (url, method, headers, data, callback, errback) {
-    restApi.proxy_upload(url, method, headers, data, callback, errback);
+    return restApi.proxy_upload(url, method, headers, data, callback, errback);
 }
 
 kintone.prototype.app = function () { }
@@ -225,64 +226,72 @@ kintone.prototype.mobile.app.setId = function (id) {
 }
 
 var desktopLookupTargetAppId = null;
-kintone.prototype.app.getLookupTargetAppId = function () {
-    return desktopLookupTargetAppId;
+kintone.prototype.app.getLookupTargetAppId = function (fieldCode) {
+    return desktopLookupTargetAppId ? desktopLookupTargetAppId[fieldCode] : null;
 }
 
 var mobileLookupTargetAppId = null;
-kintone.prototype.mobile.app.getLookupTargetAppId = function () {
-    return mobileLookupTargetAppId;
+kintone.prototype.mobile.app.getLookupTargetAppId = function (fieldCode) {
+    return mobileLookupTargetAppId ? mobileLookupTargetAppId[fieldCode] : null;
 }
 
-kintone.prototype.app.setLookupTargetAppId = function (id) {
-    desktopLookupTargetAppId = id;
+kintone.prototype.app.setLookupTargetAppId = function (fieldCode, id) {
+    desktopLookupTargetAppId = desktopLookupTargetAppId || {};
+    desktopLookupTargetAppId[fieldCode] = id ;
 }
 
-kintone.prototype.mobile.app.setLookupTargetAppId = function (id) {
-    mobileLookupTargetAppId = id;
+kintone.prototype.mobile.app.setLookupTargetAppId = function (fieldCode, id) {
+    mobileLookupTargetAppId = mobileLookupTargetAppId || {};
+    mobileLookupTargetAppId[fieldCode] = id;
 }
 
 var desktopRelatedRecordsTargetAppId = null;
-kintone.prototype.app.getRelatedRecordsTargetAppId = function () {
-    return desktopRelatedRecordsTargetAppId;
+kintone.prototype.app.getRelatedRecordsTargetAppId = function (fieldCode) {
+    return desktopRelatedRecordsTargetAppId[fieldCode];
 }
 
 var mobileRelatedRecordsTargetAppId = null;
-kintone.prototype.mobile.app.getRelatedRecordsTargetAppId = function () {
-    return mobileRelatedRecordsTargetAppId;
+kintone.prototype.mobile.app.getRelatedRecordsTargetAppId = function (fieldCode) {
+    return mobileRelatedRecordsTargetAppId[fieldCode];
 }
 
-kintone.prototype.app.getRelatedRecordsTargetAppId = function (id) {
-    desktopRelatedRecordsTargetAppId = id;
+kintone.prototype.app.setRelatedRecordsTargetAppId = function (fieldCode, id) {
+    desktopRelatedRecordsTargetAppId = desktopRelatedRecordsTargetAppId || {};
+    desktopRelatedRecordsTargetAppId[fieldCode] = id;
 }
 
-kintone.prototype.mobile.app.getRelatedRecordsTargetAppId = function (id) {
-    mobileRelatedRecordsTargetAppId = id;
+kintone.prototype.mobile.app.setRelatedRecordsTargetAppId = function (fieldCode, id) {
+    mobileRelatedRecordsTargetAppId = mobileRelatedRecordsTargetAppId || {};
+    mobileRelatedRecordsTargetAppId[fieldCode] = id;
 }
 
 var loginUser = null;
 kintone.prototype.getLoginUser = function () {
-    return loginUser;
+    if (loginUser){
+        return loginUser;
+    } else if (config.data.userinfo){
+        return config.data.userinfo.default;
+    }else{
+        return null;
+    }
 }
 
-/*"userinfo": {
-    "FFSYS_Kintone": {
-        "code": "sample",
-        "email": "sample@sample.com",
-        "employeeNumber": "",
-        "extensionNumber": "",
-        "id": "1",
-        "isGuest": "false",
-        "language": "ja",
-        "mobilePhone": "09012345678",
-        "name": "sample",
-        "phone": "0426-12-3456",
-        "timezone": "Asia/Tokyo",
-        "url": "http://sample.com"
+kintone.prototype.setLoginUser = function (_loginUser = null) {
+    if (_loginUser){
+        if (!_loginUser.hasOwnProperty('id')) return;
+        if (!_loginUser.hasOwnProperty('code')) return;
+        if (!_loginUser.hasOwnProperty('name')) return;
+        if (!_loginUser.hasOwnProperty('email')) return;
+        if (!_loginUser.hasOwnProperty('url')) return;
+        if (!_loginUser.hasOwnProperty('employeeNumber')) return;
+        if (!_loginUser.hasOwnProperty('phone')) return;
+        if (!_loginUser.hasOwnProperty('mobilePhone')) return;
+        if (!_loginUser.hasOwnProperty('extensionNumber')) return;
+        if (!_loginUser.hasOwnProperty('timezone')) return;
+        if (!_loginUser.hasOwnProperty('isGuest')) return;
+        if (!_loginUser.hasOwnProperty('language')) return;
+        loginUser = _loginUser;
     }
-}*/
-kintone.prototype.setLoginUser = function (_loginUser) {
-    loginUser = _loginUser;
 }
 
 var uiVersion = null;
@@ -345,21 +354,9 @@ kintone.prototype.app.record.getHeaderMenuSpaceElement = function () {
     return document.getElementById(MenuSpaceId);
 }
 
-kintone.prototype.app.record.setSpaceElement = function (id, str) {
-    if (null == document) { return; }
-    if (null == id) { return; }
-    document.body.innerHTML = `<div id='${id}'>${str}</div>`;
-}
-
 kintone.prototype.app.record.getSpaceElement = function (id) {
     if (null == document) { return null; }
     return document.getElementById(id);
-}
-
-kintone.prototype.mobile.app.record.setSpaceElement = function (id, str) {
-    if (null == document) { return; }
-    if (null == id) { return; }
-    document.body.innerHTML = `<div id='${id}'>${str}</div>`;
 }
 
 kintone.prototype.mobile.app.record.getSpaceElement = function (id) {
@@ -367,19 +364,14 @@ kintone.prototype.mobile.app.record.getSpaceElement = function (id) {
     return document.getElementById(id);
 }
 
-kintone.prototype.app.setFieldElements = function (fieldCode, count, str) {
-    if (null == document) { return null; }
-    var innerHTML = `<div>`;
-    for (var i=0;i<count;i++){
-        innerHTML += `<div class='${fieldCode}'>${str}</div>`
-    }
-    innerHTML += '</div>';
-    document.body.innerHTML = innerHTML;
-}
-
 kintone.prototype.app.getFieldElements = function (fieldCode) {
     if (null == document) { return null; }
-    return document.getElementsByClassName(fieldCode);
+    const htmlCollection = document.getElementsByClassName(fieldCode);
+    const arrayCollection = [];
+    for (var i = 0, len = htmlCollection.length; i < len; i++) {
+        arrayCollection.push(htmlCollection[i]);
+    }
+    return arrayCollection;
 }
 
 var headerMenuSpaceElementId = null;
@@ -409,8 +401,6 @@ kintone.prototype.app.getHeaderSpaceElement = function () {
     if (null == headerSpaceElementId) { return document.body; }
     return document.getElementById(headerSpaceElementId);
 }
-
-
 
 var mobileHeaderSpaceElementId = null;
 kintone.prototype.mobile.app.setHeaderSpaceElement = function (_mobileHeaderSpaceElementId, str) {
@@ -458,19 +448,18 @@ kintone.prototype.plugin.app.getProxyConfig = function(url, method){
 
 kintone.prototype.plugin.app.proxy = function (pluginId, url, method, headers, data, callback, errback) {
     if (proxyConfig[url] && proxyConfig[url][method]) {
-        const newHeaders = Object.assign(proxyConfig[url][method].headers, headers);
-        const newData = Object.assign(proxyConfig[url][method].data, data);
-        return restApi.proxy(url, method, newHeaders, newData, callback, errback);
+        const newHeaders = Object.assign(headers, proxyConfig[url][method].headers);
+        const newData = Object.assign(typeof data === "string" ? JSON.parse(data) : data, proxyConfig[url][method].data);
+        return restApi.proxy(url, method, newHeaders, typeof data === "string" ? JSON.stringify(newData) : newData, callback, errback);
     }else{
         return restApi.proxy(url, method, headers, data, callback, errback);
     }
 }
 
-kintone.prototype.plugin.app.proxy.upload = function (url, method, headers, data, callback, errback) {
-    restApi.proxy_upload(url, method, headers, data, callback, errback);
+kintone.prototype.plugin.app.proxy.upload = function (pluginId, url, method, headers, data, callback, errback) {
+    return restApi.proxy_upload(url, method, headers, data, callback, errback);
 }
 
 kintone.prototype.Promise = Promise;
 
 module.exports = kintone;
-//test

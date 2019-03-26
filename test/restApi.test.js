@@ -436,7 +436,6 @@
             const url = `https://${config.data.domain}/k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             const headers = {
-                "Host": `${config.data.domain}:443`,
                 "Content-Type": 'application/json',
                 "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
             };
@@ -460,7 +459,6 @@
             const url = `https://${config.data.domain}/k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             const headers = {
-                "Host": `${config.data.domain}:443`,
                 "Content-Type": 'application/json',
                 "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
             };
@@ -484,7 +482,6 @@
             const url = `https://sample.cybozu.com/k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             const headers = {
-                "Host": `sample.cybozu.com:443`,
                 "Content-Type": 'application/json',
                 "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
             };
@@ -508,7 +505,6 @@
             const url = `https://${config.data.domain}/k/v1/record.json`;
             const param = { app: "7", id: 999999999 };
             const headers = {
-                "Host": `${config.data.domain}:443`,
                 "Content-Type": 'application/json',
                 "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
             };
@@ -541,7 +537,6 @@
                 }
             }
             const headers = {
-                "Host": `${config.data.domain}:443`,
                 "Content-Type": 'application/json',
                 "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
             };
@@ -575,7 +570,6 @@
                 }
             }
             const headers = {
-                "Host": `${config.data.domain}:443`,
                 "Content-Type": 'application/json',
                 "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
             };
@@ -609,7 +603,6 @@
                 }
             }
             const headers = {
-                "Host": `${config.data.domain}:443`,
                 "Content-Type": 'application/json',
                 "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
             };
@@ -642,7 +635,6 @@
                 }
             }
             const headers = {
-                "Host": `${config.data.domain}:443`,
                 "Content-Type": 'application/json',
                 "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
             };
@@ -665,4 +657,4 @@
 
     });
 
-});
+})();

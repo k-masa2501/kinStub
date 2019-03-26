@@ -1,0 +1,20 @@
+image: node:8
+
+cache:
+  paths:
+  - node_modules/
+
+test:
+  stage: test
+  script:
+    - npm install
+    - npm test
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - test_report/
+  tags:
+    - docker
+
+
