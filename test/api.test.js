@@ -26,7 +26,7 @@
             config.data.domain = process.env.KINTONE_DOMAIN;
             config.data.username = process.env.KINTONE_USERNAME;
             config.data.password = process.env.KINTONE_PASSWORD;
-            if (process.env.HTTP_PROXY) config.data.proxy = process.env.HTTP_PROXY;
+            config.data.proxy = process.env.HTTP_PROXY;
             restApi = new (require('../src/restApi.js'))(config);
             kintone.debugObjSet(config, restApi);
             testData.get = await kintone.api(
