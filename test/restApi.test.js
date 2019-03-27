@@ -25,7 +25,7 @@
             config.data.domain = process.env.KINTONE_DOMAIN;
             config.data.username = process.env.KINTONE_USERNAME;
             config.data.password = process.env.KINTONE_PASSWORD;
-            config.data.proxy = process.env.HTTP_PROXY;
+            if (process.env.HTTP_PROXY) { config.data.proxy = process.env.HTTP_PROXY; }
             restApi = new (require('../src/restApi.js'))(config);
             testData.get = await restApi.post(
                 `https://${config.data.domain}//k/v1/records.json`,
