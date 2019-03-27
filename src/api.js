@@ -1,5 +1,4 @@
 const ev = new (require('events'))();
-const util = require('util');
 const fs = require('fs');
 var config = null;
 var restApi = null;
@@ -49,11 +48,13 @@ kintone.prototype.api = function (pathOrUrl, method, params, opt_callback, opt_e
             return restApi.put(pathOrUrl, params, opt_callback, opt_errback);
         case "DELETE":
             return restApi.delete(pathOrUrl, params, opt_callback, opt_errback);
+        default:
+            return;
     }
 }
 
 kintone.prototype.postDataTrash = function (){
-    restApi.postDataTrash();
+    return restApi.postDataTrash();
 }
 
 kintone.prototype.api.url = function (_path, flg) {

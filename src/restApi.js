@@ -169,6 +169,7 @@ restApi.prototype = {
             }
 
             kindebug.post = null;
+            return;
         }
     },
     proxy: async function (url, method, headers, data, opt_callback, err_callback){
