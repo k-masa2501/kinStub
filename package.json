@@ -1,5 +1,5 @@
 {
-  "name": "kinStub",
+  "name": "kinstub",
   "version": "0.0.2",
   "description": "Server side script to debug kintone API.",
   "main": "index.js",
