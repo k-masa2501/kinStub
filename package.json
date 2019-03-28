@@ -1,6 +1,6 @@
 {
   "name": "kinstub",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Server side script to debug kintone API.",
   "main": "index.js",
   "directories": {
