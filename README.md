@@ -13,9 +13,35 @@ or
 ```
 const kintone = require("kinstub");
 global.kintone = kintone(".kinStubSetting.json");
+
+or 
+
+const kintone = require("kinstub");
+global.kintone = kintone({
+                "domain": process.env.KINTONE_DOMAIN,
+                "username": process.env.KINTONE_USERNAME,
+                "password": process.env.KINTONE_PASSWORD,
+                "proxy": process.env.HTTP_PROXY,
+                "userinfo": {
+                    "default": {
+                        "id": "1",
+                        "code": "sample",
+                        "name": "sample",
+                        "email": "sample@sample.com",
+                        "url": "http://sample.com",
+                        "employeeNumber": "",
+                        "phone": "0426-12-3456",
+                        "mobilePhone": "09012345678",
+                        "extensionNumber": "",
+                        "timezone": "Asia/Tokyo",
+                        "isGuest": "false",
+                        "language": "ja"
+                    }
+                }
+            });
 ```  
 引数にkintoneのdomain,username,passwordを記載したjsonファイルを指定します。これらの値はrestApiでkintoneと通信する際に
-宛先情報として利用します。  
+宛先情報として利用します。proxyは必要なければ記述しないでください。  
 　  
 .kinStubSetting.json
 ```

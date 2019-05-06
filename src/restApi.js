@@ -10,9 +10,9 @@ var restApi = function(settings) {
 
 restApi.prototype = {
     requestWithProxy: function() {
-        if (config.data.proxy){
+        if (config.proxy){
             return request.defaults(
-                { 'proxy': `${config.data.proxy}` });
+                { 'proxy': `${config.proxy}` });
         }else{
             return request;
         }
@@ -24,7 +24,7 @@ restApi.prototype = {
         options.body = param;
         options.json = true;
         options.headers = {
-            "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
+            "X-Cybozu-Authorization": Base64.encode(`${config.username}:${config.password}`)
         };
 
         var response = null;
@@ -55,7 +55,7 @@ restApi.prototype = {
         options.body = param;
         options.json = true;
         options.headers = {
-            "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
+            "X-Cybozu-Authorization": Base64.encode(`${config.username}:${config.password}`)
         };
 
         var response = null;
@@ -88,7 +88,7 @@ restApi.prototype = {
         options.body  = param;
         options.json  = true;
         options.headers = {
-            "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
+            "X-Cybozu-Authorization": Base64.encode(`${config.username}:${config.password}`)
         };
         
         var response = null;
@@ -121,7 +121,7 @@ restApi.prototype = {
         options.json = true;
         options.headers = {
             Host: `${domain}:443`,
-            "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
+            "X-Cybozu-Authorization": Base64.encode(`${config.username}:${config.password}`)
         };
 
         var response = null;
@@ -152,7 +152,7 @@ restApi.prototype = {
             const options = {};
             options.json = true;
             options.headers = {
-                "X-Cybozu-Authorization": Base64.encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": Base64.encode(`${config.username}:${config.password}`)
             };
             for (var i = 0, len = kindebug.post.length;i<len;i++){
                 const url = kindebug.post[i].url.split("/");

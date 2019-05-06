@@ -21,14 +21,14 @@
         const testData = {};
 
         before(async function () { 
-            config = new (require('../src/config.js'))("./test/.setting.json");
-            config.data.domain = process.env.KINTONE_DOMAIN;
-            config.data.username = process.env.KINTONE_USERNAME;
-            config.data.password = process.env.KINTONE_PASSWORD;
-            if (process.env.HTTP_PROXY) { config.data.proxy = process.env.HTTP_PROXY; }
+            config = (require('../src/config.js'))("./test/.setting.json");
+            config.domain = process.env.KINTONE_DOMAIN;
+            config.username = process.env.KINTONE_USERNAME;
+            config.password = process.env.KINTONE_PASSWORD;
+            if (process.env.HTTP_PROXY) { config.proxy = process.env.HTTP_PROXY; }
             restApi = new (require('../src/restApi.js'))(config);
             testData.get = await restApi.post(
-                `https://${config.data.domain}//k/v1/records.json`,
+                `https://${config.domain}//k/v1/records.json`,
                 { app: "7", records: [{ single_line_string: { value: "aaaa" } }, { single_line_string: { value: "bbbb" } }] },
                 null,
                 null
@@ -38,21 +38,21 @@
         beforeEach(function () { });
 
         it('get success.', async function () {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0]};
             const result = await restApi.get(url, param, null, null);
             chai.assert(result.record.single_line_string.value, "aaaa");
         });
 
         it('get success by multiple items.', async function () {
-            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const url = `https://${config.domain}//k/v1/records.json`;
             const param = { app: "7" };
             const result = await restApi.get(url, param, null, null);
             chai.assert.isOk(0 < result.records.length);
         });
 
         it('get success by promise.', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             restApi.get(url, param, null, null).then(
                 function(result){
@@ -66,7 +66,7 @@
         });
 
         it('get success by callback.', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             restApi.get(url, param,
                 function (result) {
@@ -79,7 +79,7 @@
         });
 
         it('get faild reason not exist record id.', async function () {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id: 10000 };
             var result = null;
             try {
@@ -92,7 +92,7 @@
         });
 
         it('get faild by promise(not exist record id).', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id: 10000 };
 
                 restApi.get(url, param, null, null).then(
@@ -107,7 +107,7 @@
         });
 
         it('get faild by callback(not exist record id).', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id: 10000 };
 
             restApi.get(url, param,
@@ -136,7 +136,7 @@
         });
 
         it('get success but promise throw new error.', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             restApi.get(url, param, null, null).then(
                 function (result) {
@@ -152,21 +152,21 @@
         });
 
         it('post success.', async function () {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", record: { single_line_string: { value: "cccc" } } };
             const result = await restApi.post(url, param, null, null);
             chai.assert.isOk(result.id);
         });
 
         it('post success by multiple records.', async function () {
-            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const url = `https://${config.domain}//k/v1/records.json`;
             const param = { app: "7", records: [{ single_line_string: { value: "ddd" } }, { single_line_string: { value: "bbbb" } }] };
             const result = await restApi.post(url, param, null, null);
             chai.assert.isOk(result.ids);
         });
 
         it('post success by promise.', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", record: { single_line_string: { value: "eeee" } } };
             restApi.post(url, param, null, null).then(
                 function(resp){
@@ -180,7 +180,7 @@
         });
         
         it('post success by callback.', function (done) {
-            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const url = `https://${config.domain}/k/v1/record.json`;
             const param = { app: "7", record: { single_line_string: { value: "ffff" } } };
             restApi.post(url, param, 
                 function(resp){
@@ -194,7 +194,7 @@
         });
 
         it('post faild reason app not exist.', async function () {
-            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const url = `https://${config.domain}/k/v1/record.json`;
             const param = { app: "10000", record: { single_line_string: { value: "gggg" } } };
             var result = false;
             try{
@@ -207,7 +207,7 @@
         });
 
         it('post faild by promise(app not exist).', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "10000", record: { single_line_string: { value: "hhhh" } } };
             restApi.post(url, param, null, null).then(
                 function(resp){
@@ -221,7 +221,7 @@
         });
         
         it('post faild by callback(app not exist).', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "10000", record: { single_line_string: { value: "iiii" } } };
             restApi.post(url, param, 
                 function(resp){
@@ -235,21 +235,21 @@
         });
 
         it('put success.', async function () {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "jjjj" } } };
             const result = await restApi.put(url, param, null, null);
             chai.assert.isOk(result.revision);
         });
 
         it('put success by multiple records.', async function () {
-            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const url = `https://${config.domain}//k/v1/records.json`;
             const param = { app: "7", records: [{id:testData.get.ids[0], record:{ single_line_string: { value: "kkkk" } }}, { id:testData.get.ids[1], record:{single_line_string: { value: "bbbb" } }}] };
             const result = await restApi.put(url, param, null, null);
             chai.assert.isOk(2 === result.records.length);
         });
 
         it('put success by promise.', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "llll" } } };
             restApi.put(url, param, null, null).then(
                 function(resp){
@@ -263,7 +263,7 @@
         });
         
         it('put success by callback.', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id:testData.get.ids[0], record: { single_line_string: { value: "mmmm" } } };
             restApi.put(url, param, 
                 function(resp){
@@ -277,7 +277,7 @@
         });
 
         it('put faild reason record id not exist.', async function () {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id:99999999, record: { single_line_string: { value: "nnnn" } } };
             var result = false;
             try{
@@ -290,7 +290,7 @@
         });
 
         it('put faild by promise(record id not exist).', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id:99999999, record: { single_line_string: { value: "oooo" } } };
             restApi.put(url, param, null, null).then(
                 function(resp){
@@ -304,7 +304,7 @@
         });
         
         it('put faild by callback(record id not exist).', function (done) {
-            const url = `https://${config.data.domain}//k/v1/record.json`;
+            const url = `https://${config.domain}//k/v1/record.json`;
             const param = { app: "7", id:99999999, record: { single_line_string: { value: "pppp" } } };
             restApi.put(url, param, 
                 function(resp){
@@ -321,13 +321,13 @@
 
             // テストデータ作成
             const postResult = await restApi.post(
-                `https://${config.data.domain}//k/v1/record.json`,
+                `https://${config.domain}//k/v1/record.json`,
                 { app: "7", record: { single_line_string: { value: "qqqq" } } },
                 null,
                 null
             );
 
-            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const url = `https://${config.domain}//k/v1/records.json`;
             const param = { app: "7", ids: [postResult.id] };
             const result = await restApi.delete(url, param, null, null);
             chai.assert.isOk(result);
@@ -337,13 +337,13 @@
 
             // テストデータ作成
             restApi.post(
-                `https://${config.data.domain}//k/v1/record.json`,
+                `https://${config.domain}//k/v1/record.json`,
                 { app: "7", record: { single_line_string: { value: "rrrr" } } },
                 null,
                 null
             ).then(
                 function(resp){
-                    const url = `https://${config.data.domain}//k/v1/records.json`;
+                    const url = `https://${config.domain}//k/v1/records.json`;
                     const param = { app: "7", ids: [resp.id] };
                     restApi.delete(url, param, null, null).then(
                         function (resp) {
@@ -363,13 +363,13 @@
             
             // テストデータ作成
             restApi.post(
-                `https://${config.data.domain}//k/v1/record.json`,
+                `https://${config.domain}//k/v1/record.json`,
                 { app: "7", record: { single_line_string: { value: "ssss" } } },
                 null,
                 null
             ).then(
                 function(resp){
-                    const url = `https://${config.data.domain}//k/v1/records.json`;
+                    const url = `https://${config.domain}//k/v1/records.json`;
                     const param = { app: "7", ids: [resp.id] };
                     restApi.delete(url, param,
                         function (resp) {
@@ -387,7 +387,7 @@
 
         it('delete faild reason record id not exist.', async function () {
 
-            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const url = `https://${config.domain}//k/v1/records.json`;
             const param = { app: "7", ids: [999999] };
             var result = false;
             try {
@@ -400,7 +400,7 @@
         });
 
         it('delete faild by promise(record id not exist).', function (done) {
-            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const url = `https://${config.domain}//k/v1/records.json`;
             const param = { app: "7", ids: [999999] };
             restApi.delete(url, param, null, null).then(
                 function (resp) {
@@ -414,7 +414,7 @@
         });
 
         it('delete faild by callback(record id not exist).', function (done) {
-            const url = `https://${config.data.domain}//k/v1/records.json`;
+            const url = `https://${config.domain}//k/v1/records.json`;
             const param = { app: "7", ids: [999999] };
             restApi.delete(url, param,
                 function (resp) {
@@ -433,11 +433,11 @@
                 return btoa(unescape(encodeURIComponent(str)));
             }
 
-            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const url = `https://${config.domain}/k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             restApi.proxy(url, "GET", headers, JSON.stringify(param), null, null).then(
                 function (arg){
@@ -456,11 +456,11 @@
                 return btoa(unescape(encodeURIComponent(str)));
             }
 
-            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const url = `https://${config.domain}/k/v1/record.json`;
             const param = { app: "7", id: testData.get.ids[0] };
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             restApi.proxy(url, "GET", headers, JSON.stringify(param),
                 function (statusCode, body, headers) {
@@ -483,7 +483,7 @@
             const param = { app: "7", id: testData.get.ids[0] };
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             restApi.proxy(url, "GET", headers, JSON.stringify(param), null, null).then(
                 function (arg) {
@@ -502,11 +502,11 @@
                 return btoa(unescape(encodeURIComponent(str)));
             }
 
-            const url = `https://${config.data.domain}/k/v1/record.json`;
+            const url = `https://${config.domain}/k/v1/record.json`;
             const param = { app: "7", id: 999999999 };
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             restApi.proxy(url, "GET", headers, JSON.stringify(param),
                 function (statusCode, body, headers) {
@@ -525,7 +525,7 @@
                 return btoa(unescape(encodeURIComponent(str)));
             }
 
-            const url = `https://${config.data.domain}/k/v1/file.json`;
+            const url = `https://${config.domain}/k/v1/file.json`;
             const formData = {
                 name: 'test_upload.js',
                     file: {
@@ -538,7 +538,7 @@
             }
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             restApi.proxy_upload(url, "POST", headers, formData, null, null).then(
                 function (arg) {
@@ -558,7 +558,7 @@
                 return btoa(unescape(encodeURIComponent(str)));
             }
 
-            const url = `https://${config.data.domain}/k/v1/file.json`;
+            const url = `https://${config.domain}/k/v1/file.json`;
             const formData = {
                 name: 'test_upload.js',
                 file: {
@@ -571,7 +571,7 @@
             }
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
 
             restApi.proxy_upload(url, "POST", headers, formData,
@@ -591,7 +591,7 @@
                 return btoa(unescape(encodeURIComponent(str)));
             }
 
-            const url = `https://${config.data.domain}/k/v1/file.json`;
+            const url = `https://${config.domain}/k/v1/file.json`;
             const formData = {
                 name: 'test_upload.js',
                 file: {
@@ -604,7 +604,7 @@
             }
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             restApi.proxy_upload(url, "POST", headers, formData, null, null).then(
                 function (arg) {
@@ -623,7 +623,7 @@
                 return btoa(unescape(encodeURIComponent(str)));
             }
 
-            const url = `https://${config.data.domain}/k/v1/file.json`;
+            const url = `https://${config.domain}/k/v1/file.json`;
             const formData = {
                 name: 'test_upload.js',
                 file: {
@@ -636,7 +636,7 @@
             }
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
 
             restApi.proxy_upload(url, "POST", headers, formData,

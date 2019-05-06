@@ -17,11 +17,11 @@
         var config = null;
 
         before(async function () {
-            config = new (require('../src/config.js'))("./test/.setting.json");
-            config.data.domain = process.env.KINTONE_DOMAIN;
-            config.data.username = process.env.KINTONE_USERNAME;
-            config.data.password = process.env.KINTONE_PASSWORD;
-            config.data.proxy = process.env.HTTP_PROXY;
+            config = (require('../src/config.js'))("./test/.setting.json");
+            config.domain = process.env.KINTONE_DOMAIN;
+            config.username = process.env.KINTONE_USERNAME;
+            config.password = process.env.KINTONE_PASSWORD;
+            config.proxy = process.env.HTTP_PROXY;
             restApi = new (require('../src/restApi.js'))(config);
          });
 

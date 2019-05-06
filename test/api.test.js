@@ -22,15 +22,15 @@
 
         before(async function () { 
             kintone = new (require('../src/api.js'))("./test/.setting.json");
-            config = new (require('../src/config.js'))("./test/.setting.json");
-            config.data.domain = process.env.KINTONE_DOMAIN;
-            config.data.username = process.env.KINTONE_USERNAME;
-            config.data.password = process.env.KINTONE_PASSWORD;
-            if (process.env.HTTP_PROXY) {config.data.proxy = process.env.HTTP_PROXY;}
+            config = (require('../src/config.js'))("./test/.setting.json");
+            config.domain = process.env.KINTONE_DOMAIN;
+            config.username = process.env.KINTONE_USERNAME;
+            config.password = process.env.KINTONE_PASSWORD;
+            if (process.env.HTTP_PROXY) {config.proxy = process.env.HTTP_PROXY;}
             restApi = new (require('../src/restApi.js'))(config);
             kintone.debugObjSet(config, restApi);
             testData.get = await kintone.api(
-                `https://${config.data.domain}//k/v1/records.json`,
+                `https://${config.domain}//k/v1/records.json`,
                 "POST",
                 { app: "7", records: [{ single_line_string: { value: "aaaa" } }, { single_line_string: { value: "bbbb" } }] },
                 null,
@@ -127,43 +127,43 @@
 
             const result = kintone.api.url("/k/v1/record");
 
-            chai.assert.equal(result, `https://${config.data.domain}/k/v1/record.json`);
+            chai.assert.equal(result, `https://${config.domain}/k/v1/record.json`);
         });
 
         it('kintone.api.url by guest space.', function () {
 
-            config.data.guest_space_id  = 1;
+            config.guest_space_id  = 1;
             kintone.debugObjSet(config, restApi);
 
             const result = kintone.api.url("/k/v1/record", true);
-            chai.assert.equal(result, `https://${config.data.domain}/k/guest/1/v1/record.json`);
+            chai.assert.equal(result, `https://${config.domain}/k/guest/1/v1/record.json`);
 
-            delete config.data.guest_space_id;
+            delete config.guest_space_id;
             kintone.debugObjSet(config, restApi);
         });
 
         it('kintone.api.urlForGet', function () {
 
             var result = kintone.api.urlForGet("/k/v1/record", { foo: 'bar', record: { key: ['val1', 'val2'] } });
-            chai.assert.equal(result, `https://${config.data.domain}/k/v1/record.json?foo=bar&record.key[0]=val1&record.key[1]=val2`);
+            chai.assert.equal(result, `https://${config.domain}/k/v1/record.json?foo=bar&record.key[0]=val1&record.key[1]=val2`);
             result = kintone.api.urlForGet("/k/v1/record", { foo: 'bar', key: ['val1', 'val2'] });
-            chai.assert.equal(result, `https://${config.data.domain}/k/v1/record.json?foo=bar&key[0]=val1&key[1]=val2`);
+            chai.assert.equal(result, `https://${config.domain}/k/v1/record.json?foo=bar&key[0]=val1&key[1]=val2`);
             result = kintone.api.urlForGet("/k/v1/record", { foo: 'bar', record: { key: { subKey: ['val1', 'val2'], kai: "sou" }, sam: "ple" }, adam: 'ive' });
-            chai.assert.equal(result, `https://${config.data.domain}/k/v1/record.json?foo=bar&record.key.subKey[0]=val1&record.key.subKey[1]=val2&record.key.kai=sou&record.sam=ple&adam=ive`);
+            chai.assert.equal(result, `https://${config.domain}/k/v1/record.json?foo=bar&record.key.subKey[0]=val1&record.key.subKey[1]=val2&record.key.kai=sou&record.sam=ple&adam=ive`);
             result = kintone.api.urlForGet("/k/v1/record", { foo: 'bar', key: [{ subKey: ['val1', 'val2'] }, 'val3'] });
-            chai.assert.equal(result, `https://${config.data.domain}/k/v1/record.json?foo=bar&key[0].subKey[0]=val1&key[0].subKey[1]=val2&key[1]=val3`);
+            chai.assert.equal(result, `https://${config.domain}/k/v1/record.json?foo=bar&key[0].subKey[0]=val1&key[0].subKey[1]=val2&key[1]=val3`);
 
         });
 
         it('kintone.api.urlForGet by guest space.', function () {
 
-            config.data.guest_space_id = 1;
+            config.guest_space_id = 1;
             kintone.debugObjSet(config, restApi);
 
             var result = kintone.api.urlForGet("/k/v1/record", { foo: 'bar', record: { key: ['val1', 'val2'] } });
-            chai.assert.equal(result, `https://${config.data.domain}/k/guest/1/v1/record.json?foo=bar&record.key[0]=val1&record.key[1]=val2`);
+            chai.assert.equal(result, `https://${config.domain}/k/guest/1/v1/record.json?foo=bar&record.key[0]=val1&record.key[1]=val2`);
 
-            delete config.data.guest_space_id;
+            delete config.guest_space_id;
             kintone.debugObjSet(config, restApi)
 
         });
@@ -196,7 +196,7 @@
             const param = { app: "7" };
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             kintone.proxy(kintone.api.url("/k/v1/records"), "GET", headers, JSON.stringify(param), null, null).then(
                 function (arg) {
@@ -227,7 +227,7 @@
             }
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             kintone.proxy.upload(kintone.api.url("/k/v1/file"), "POST", headers, formData, null, null).then(
                 function (arg) {
@@ -510,7 +510,7 @@
             const param = { app: "7" };
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             kintone.plugin.app.proxy(1, kintone.api.url("/k/v1/records"), "GET", headers, JSON.stringify(param), null, null).then(
                 function (arg) {
@@ -529,7 +529,7 @@
             }
 
             var headers = {
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             var data = {
                 app: "7"
@@ -571,7 +571,7 @@
             }
             const headers = {
                 "Content-Type": 'application/json',
-                "X-Cybozu-Authorization": encode(`${config.data.username}:${config.data.password}`)
+                "X-Cybozu-Authorization": encode(`${config.username}:${config.password}`)
             };
             kintone.plugin.app.proxy.upload(1, kintone.api.url("/k/v1/file"), "POST", headers, formData, null, null).then(
                 function (arg) {

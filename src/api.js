@@ -3,8 +3,12 @@ const fs = require('fs');
 var config = null;
 var restApi = null;
 
-var kintone = function (filePath) {
-    config = new (require('./config'))(filePath);
+var kintone = function (arg) {
+    if ("object" === typeof arg){
+        config = arg;
+    }else{
+        config = (require('./config'))(arg);
+    }
     restApi = new (require('./restApi'))(config);
 }
 
@@ -61,10 +65,10 @@ kintone.prototype.api.url = function (_path, flg) {
 
     const path = _path.replace(".json", "");
 
-    if (flg && config.data.guest_space_id && Number(config.data.guest_space_id) > 0) {
-        return `https://${config.data.domain}/k/guest/${config.data.guest_space_id}${path.replace("/k", "")}.json`;
+    if (flg && config.guest_space_id && Number(config.guest_space_id) > 0) {
+        return `https://${config.domain}/k/guest/${config.guest_space_id}${path.replace("/k", "")}.json`;
     }
-    return `https://${config.data.domain}${path}.json`;
+    return `https://${config.domain}${path}.json`;
 }
 
 const querystring = function (_param){
@@ -97,10 +101,10 @@ kintone.prototype.api.urlForGet = function (_path, params, opt_detectGuestSpace)
     const path = _path.replace(".json", "");
     var url = null;
 
-    if (config.data.guest_space_id && Number(config.data.guest_space_id) > 0) {
-        url = `https://${config.data.domain}/k/guest/${config.data.guest_space_id}${path.replace("/k", "")}.json`;
+    if (config.guest_space_id && Number(config.guest_space_id) > 0) {
+        url = `https://${config.domain}/k/guest/${config.guest_space_id}${path.replace("/k", "")}.json`;
     }else{
-        url = `https://${config.data.domain}${path}.json`;
+        url = `https://${config.domain}${path}.json`;
     }
     return `${url}?${querystring(params)}`;
 }
@@ -270,8 +274,8 @@ var loginUser = null;
 kintone.prototype.getLoginUser = function () {
     if (loginUser){
         return loginUser;
-    } else if (config.data.userinfo){
-        return config.data.userinfo.default;
+    } else if (config.userinfo){
+        return config.userinfo.default;
     }else{
         return null;
     }
