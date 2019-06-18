@@ -421,6 +421,36 @@ kintone.prototype.mobile.app.getHeaderSpaceElement = function () {
     return document.getElementById(mobileHeaderSpaceElementId);
 }
 
+kintone.prototype.portal = function () { };
+var contentSpaceElementId= null;
+kintone.prototype.portal.setContentSpaceElement = function (_contentSpaceElementId, str) {
+    if (null == document) { return; }
+    if (null == _contentSpaceElementId) { return; }
+    contentSpaceElementId = _contentSpaceElementId;
+    document.body.innerHTML = `<div id='${contentSpaceElementId}'>${str}</div>`;
+}
+
+kintone.prototype.portal.getContentSpaceElement = function () {
+    if (null == document) { return null; }
+    if (null == contentSpaceElementId) { return document.body; }
+    return document.getElementById(contentSpaceElementId);
+}
+
+kintone.prototype.mobile.portal = function () { };
+var mobileContentSpaceElementId = null;
+kintone.prototype.mobile.portal.setContentSpaceElement = function (_mobileContentSpaceElementId, str) {
+    if (null == document) { return; }
+    if (null == _mobileContentSpaceElementId) { return; }
+    mobileContentSpaceElementId = _mobileContentSpaceElementId;
+    document.body.innerHTML = `<div id='${mobileContentSpaceElementId}'>${str}</div>`;
+}
+
+kintone.prototype.mobile.portal.getContentSpaceElement = function () {
+    if (null == document) { return null; }
+    if (null == mobileContentSpaceElementId) { return document.body; }
+    return document.getElementById(mobileContentSpaceElementId);
+}
+
 kintone.prototype.plugin = function () { }
 kintone.prototype.plugin.app = function () { }
 

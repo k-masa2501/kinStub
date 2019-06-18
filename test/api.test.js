@@ -480,6 +480,31 @@
             chai.assert.equal(toString.call(element).slice(8, -1).toLowerCase(), "htmldivelement");
         });
 
+
+
+
+
+
+
+        it('kintone.portal.getContentSpaceElement(setContentSpaceElement).', function () {
+            const htmlStr = "<div></div>";
+            kintone.portal.setContentSpaceElement("HeaderContentSpaceElement", htmlStr);
+            const element = kintone.portal.getContentSpaceElement();
+            chai.assert.equal(toString.call(element).slice(8, -1).toLowerCase(), "htmldivelement");
+        });
+
+        it('kintone.mobile.portal.getContentSpaceElement(setContentSpaceElement).', function () {
+            const htmlStr = "<div></div>";
+            kintone.mobile.portal.setContentSpaceElement("HeaderContentSpaceElement", htmlStr);
+            const element = kintone.mobile.portal.getContentSpaceElement();
+            chai.assert.equal(toString.call(element).slice(8, -1).toLowerCase(), "htmldivelement");
+        });
+
+
+
+
+
+
         it('kintone.plugin.app.getConfig(setConfig).', function () {
             const config = { "key1": "value1", "key2": "value2" };
             kintone.plugin.app.setConfig(config, function(){});

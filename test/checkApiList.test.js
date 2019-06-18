@@ -56,6 +56,7 @@
              ["kintone.app.getHeaderMenuSpaceElement", true, false],
              ["kintone.app.getHeaderSpaceElement", true, false],
              ["kintone.mobile.app.getHeaderSpaceElement", false, true],
+             ["kintone.portal.getContentSpaceElement", true, true],
              ["kintone.plugin.app.getConfig", true, true],
              ["kintone.plugin.app.setConfig", true, false],
              ["kintone.plugin.app.proxy", true, true],
