@@ -95,7 +95,7 @@ htmlエレメント取得系のメソッドはHTML DOMのドライバーが必�
 詳細な利用方法はテストコードを参考にしてもらえると助かります。。  
 https://github.com/k-masa2501/kinStub/tree/master/test  
 
-## 作成したスタブのリスト(2019/03/27)
+## 作成したスタブのリスト(2019/06/18)
 * kintone.events.on
 * kintone.events.off
 * kintone.api
@@ -124,6 +124,8 @@ https://github.com/k-masa2501/kinStub/tree/master/test
 * kintone.app.getHeaderMenuSpaceElement
 * kintone.app.getHeaderSpaceElement
 * kintone.mobile.app.getHeaderSpaceElement
+* kintone.portal.getContentSpaceElement
+* kintone.mobile.portal.getContentSpaceElement
 * kintone.plugin.app.getConfig
 * kintone.plugin.app.setConfig
 * kintone.plugin.app.proxy
